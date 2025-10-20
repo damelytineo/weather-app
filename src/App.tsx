@@ -1,15 +1,13 @@
 import React from 'react';
-import './styles/index.css';
-import UnitsToggle from './components/UnitsToggle';
+import UnitsDropdown from './components/UnitsDropdown';
 import SearchBar from './components/SearchBar';
 import CurrentWeather from './components/CurrentWeather';
 import Forecast from './components/Forecast';
 
 function App() {
   return (
-    <div className="App">
-      TEST
-      <UnitsToggle />
+    <div>
+      <UnitsDropdown />
       <SearchBar />
       <CurrentWeather />
       <Forecast />
