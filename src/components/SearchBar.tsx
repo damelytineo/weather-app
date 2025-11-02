@@ -4,8 +4,8 @@ import { Location } from '../types/weather';
 
 interface SearchBarProps {
   locationResults: Location[];
-  setLocationResults: React.Dispatch<React.SetStateAction< Location[] >>;
-  setSelectedLocation: React.Dispatch<React.SetStateAction< Location | null >>;
+  setLocationResults: React.Dispatch<React.SetStateAction<Location[]>>;
+  setSelectedLocation: React.Dispatch<React.SetStateAction<Location | null>>;
 }
 
 function SearchBar({ locationResults, setLocationResults, setSelectedLocation }: SearchBarProps) {
@@ -25,9 +25,11 @@ function SearchBar({ locationResults, setLocationResults, setSelectedLocation }:
         seen.add(place.country_code);
         return true;
       })
-      .map((place: { name: string; country_code: string }) => ({
+      .map((place: { name: string; country_code: string; latitude: number; longitude: number }) => ({
         name: place.name,
         country_code: place.country_code,
+        latitude: place.latitude,
+        longitude: place.longitude,
       }));
 
     setLocationResults(filteredRes);
@@ -46,7 +48,7 @@ function SearchBar({ locationResults, setLocationResults, setSelectedLocation }:
                 className="btn btn-link w-100 text-start p-2"
                 type="button"
                 onClick={() => {
-                  setSelectedLocation({ name: location.name, country_code: location.country_code });
+                  setSelectedLocation(location);
                   setLocationResults([]);
                   setSearchInput('');
                 }}
