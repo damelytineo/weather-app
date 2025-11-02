@@ -7,16 +7,18 @@ import Forecast from './components/Forecast';
 
 function App() {
   const [locationResults, setLocationResults] = React.useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = React.useState<{ name: string; country_code: string } | null>(null);
 
   return (
     <div>
       <Logo />
       <UnitsDropdown />
-      <SearchBar 
+      <SearchBar
         locationResults={locationResults}
         setLocationResults={setLocationResults}
+        setSelectedLocation={setSelectedLocation}
       />
-      <CurrentWeather />
+      <CurrentWeather selectedLocation={selectedLocation} />
       <Forecast />
     </div>
   );

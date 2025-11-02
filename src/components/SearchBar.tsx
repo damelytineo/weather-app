@@ -4,9 +4,10 @@ import iconSearch from '../assets/images/icon-search.svg';
 interface SearchBarProps {
   locationResults: any[];
   setLocationResults: React.Dispatch<React.SetStateAction<any[]>>;
+  setSelectedLocation: React.Dispatch<React.SetStateAction<{ name: string; country_code: string } | null>>
 }
 
-function SearchBar({ locationResults, setLocationResults}: SearchBarProps) { //add setSelectedLocation to props
+function SearchBar({ locationResults, setLocationResults, setSelectedLocation }: SearchBarProps) {
   const [searchInput, setSearchInput] = React.useState<string>('');
 
   const fetchLocations = async (location: string) => {
@@ -14,7 +15,7 @@ function SearchBar({ locationResults, setLocationResults}: SearchBarProps) { //a
     const data = await res.json();
 
     const seen = new Set<string>();
-    const filteredRes= (data.results || [])
+    const filteredRes = (data.results || [])
       .filter((place: { name: string; country_code: string }) =>
         place.name.toLowerCase().includes(location.toLowerCase())
       )
@@ -37,10 +38,20 @@ function SearchBar({ locationResults, setLocationResults}: SearchBarProps) { //a
       <img src={iconSearch} alt="Search Icon" className="search-icon" />
       <button className="btn btn-primary search-button" type="button" onClick={() => fetchLocations(searchInput)}>Search</button>
       {locationResults.length > 0 && (
-        <ul className="location-results">
-          {locationResults.map((place, index) => (
-            <li key={index}>
-              {place.name}, {place.country_code}
+        <ul className="list-group position-absolute w-100" style={{ zIndex: 1000 }}>
+          {locationResults.map((location, index) => (
+            <li key={index} className="list-group-item list-group-item-action p-0">
+              <button
+                className="btn btn-link w-100 text-start p-2"
+                type="button"
+                onClick={() => {
+                  setSelectedLocation({ name: location.name, country_code: location.country_code });
+                  setLocationResults([]);
+                  setSearchInput('');
+                }}
+              >
+                {location.name}, {location.country_code}
+              </button>
             </li>
           ))}
         </ul>
