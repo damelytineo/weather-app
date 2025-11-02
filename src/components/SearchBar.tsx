@@ -1,10 +1,11 @@
 import React from 'react';
 import iconSearch from '../assets/images/icon-search.svg';
+import { Location } from '../types/weather';
 
 interface SearchBarProps {
-  locationResults: any[];
-  setLocationResults: React.Dispatch<React.SetStateAction<any[]>>;
-  setSelectedLocation: React.Dispatch<React.SetStateAction<{ name: string; country_code: string } | null>>
+  locationResults: Location[];
+  setLocationResults: React.Dispatch<React.SetStateAction< Location[] >>;
+  setSelectedLocation: React.Dispatch<React.SetStateAction< Location | null >>;
 }
 
 function SearchBar({ locationResults, setLocationResults, setSelectedLocation }: SearchBarProps) {
@@ -15,7 +16,7 @@ function SearchBar({ locationResults, setLocationResults, setSelectedLocation }:
     const data = await res.json();
 
     const seen = new Set<string>();
-    const filteredRes = (data.results || [])
+    const filteredRes: Location[] = (data.results || [])
       .filter((place: { name: string; country_code: string }) =>
         place.name.toLowerCase().includes(location.toLowerCase())
       )
