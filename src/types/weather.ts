@@ -4,3 +4,9 @@ export interface Location {
     latitude: number;
     longitude: number;
 }
+
+export interface Units {
+    temp: 'celsius' | 'fahrenheit';
+    wind: 'km/h' | 'mph';
+    precip: 'mm' | 'in';
+}
