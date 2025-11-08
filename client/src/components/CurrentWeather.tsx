@@ -1,6 +1,7 @@
 import React from 'react';
 import { Location, Units } from '../types/weather';
-import useWeatherData from '../hooks/useWeatherData';
+import { useQuery } from '@apollo/client/react';
+import { GET_WEATHER } from '../graphql/queries';
 
 interface CurrentWeatherProps {
     selectedLocation: Location | null;
@@ -8,10 +9,17 @@ interface CurrentWeatherProps {
 }
 
 function CurrentWeather({ selectedLocation, units }: CurrentWeatherProps) {
-    const { weatherData, loading, error } = useWeatherData(selectedLocation);
+
+    const { loading, error, data } = useQuery<getWeatherData>(GET_WEATHER, {
+        variables: {
+            latitude: selectedLocation?.latitude,
+            longitude: selectedLocation?.longitude,
+        },
+        skip: !selectedLocation,
+    });
 
     if (loading) return <p>Loading weather data...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (error) return <p>Error loading weather data: {error.message}</p>;
 
     const convertTemp = (celsius: number): number => {
         if (units.temp === 'fahrenheit') {
@@ -27,8 +35,8 @@ function CurrentWeather({ selectedLocation, units }: CurrentWeatherProps) {
         return kmh;
     };
 
-    const convertedTemp = convertTemp(weatherData?.current_weather.temperature);
-    const convertedWind = convertWindSpeed(weatherData?.current_weather.windspeed);
+    const convertedTemp = convertTemp(data?.current_weather.temperature);
+    const convertedWind = convertWindSpeed(data?.current_weather.windspeed);
 
     return (
         <div>
@@ -42,7 +50,7 @@ function CurrentWeather({ selectedLocation, units }: CurrentWeatherProps) {
                     Wind Speed: {convertedWind?.toFixed(1)}
                     {units.wind === 'km/h' ? 'km/h' : 'mph'}
                 </p>
-                <p>Weather Code: {weatherData?.current_weather.weathercode}</p>
+                <p>Weather Code: {data?.current_weather.weathercode}</p>
             </div>
         </div>
     );

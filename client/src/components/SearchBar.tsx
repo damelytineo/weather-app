@@ -1,6 +1,8 @@
 import React from 'react';
 import iconSearch from '../assets/images/icon-search.svg';
 import { Location } from '../types/weather';
+import { useLazyQuery } from "@apollo/client/react";
+import { GET_LOCATIONS } from '../graphql/queries';
 
 interface SearchBarProps {
   locationResults: Location[];
@@ -8,15 +10,27 @@ interface SearchBarProps {
   setSelectedLocation: React.Dispatch<React.SetStateAction<Location | null>>;
 }
 
+interface getLocationsData {
+  locations: Location[];
+}
+
 function SearchBar({ locationResults, setLocationResults, setSelectedLocation }: SearchBarProps) {
   const [searchInput, setSearchInput] = React.useState<string>('');
+  const [getLocations] = useLazyQuery<getLocationsData>(GET_LOCATIONS);
 
+  // use query
   const fetchLocations = async (location: string) => {
-    const res = await fetch(`http://localhost:8000/api/search?name=${location}`);
-    const data = await res.json();
+    const { data } = await getLocations({
+      variables: { name: location },
+    });
+
+    if (!data) {
+      setLocationResults([]);
+      return;
+    }
 
     const seen = new Set<string>();
-    const filteredRes: Location[] = (data.results || [])
+    const filteredRes: Location[] = (data.locations || [])
       .filter((place: { name: string; country_code: string }) =>
         place.name.toLowerCase().includes(location.toLowerCase())
       )
